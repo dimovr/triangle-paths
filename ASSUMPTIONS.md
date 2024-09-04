@@ -17,5 +17,10 @@ Also to showcase abstracting away traversal mechanisms from evaluation criteria.
 Realization: The arbitrary matrix data structure `Triangle = Vector[Vector[Int]]` is not suitable for the use case.
 Started thinking about generic program shape initially and didn't pay attention that I mislead with the choice from the beginning.
 
-New assumption: Since the triangle starts from a fixed root point, has a direction and at most 2 members should be replaced with binary directed acyclic graph.
+~~New assumption: Since the triangle starts from a fixed root point, has a direction and at most 2 members should be replaced with binary directed acyclic graph.~~
 
+Hopefully a conclusion:
+The problem was not with the data structure but rather with top-down approach chose instead of bottom-up.
+The initial implementation required 2^N time complexity as each node had to be recursively recomputed and a greedy approach can't be used.
+
+Reimplemented with bottom-up traversal to optimize to O(N). 

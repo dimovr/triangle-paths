@@ -1,9 +1,10 @@
 package triangle.paths
 
 import cats.effect.{ExitCode, IO, IOApp}
-import cats.implicits._
+import cats.implicits.*
 import fs2.io.file.Path
-import com.monovore.decline._
+import com.monovore.decline.*
+import triangle.paths.Strategy.DFS
 
 object TrianglePath extends IOApp {
 
@@ -22,16 +23,20 @@ object TrianglePath extends IOApp {
     Command("triangle-path", "")((pathOpt, strategyOpt, functionOpt).tupled)
 
   // Function to read and process the triangle from the file
-  private def  processFile(path: Path, function: Function): IO[String] =
-    DataLoader.loadFile(path) { triangle =>
-      val (path, sum) = Strategy.DFS.traverse(triangle, function)
-      IO.pure(s"Minimal path is: ${path.mkString(" + ")} = $sum")
+  private def processFile(filePath: Path, strategy: Strategy, function: Function): IO[String] = {
+    val resultPath = strategy match {
+      case Strategy.Optimized => Strategy.Optimized.processStream(DataLoader.dataStream(filePath))
+      case Strategy.DFS => DataLoader.withDataResource(filePath)(Strategy.DFS.traverse(_, function))
     }
+
+    resultPath.map(path => s"Minimal path is: ${path.mkString(" + ")} = ${path.sum}")
+  }
 
   override def run(args: List[String]): IO[ExitCode] =
     command.parse(args) match {
       case Left(help) => IO.pure(Console.err.println(help)).as(ExitCode.Error)
       case Right((path, strategy, function)) =>
-        processFile(path, function).flatMap(IO.println).as(ExitCode.Success)
+        processFile(path, strategy, function).flatMap(IO.println).as(ExitCode.Success)
     }
+
 }

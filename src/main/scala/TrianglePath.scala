@@ -21,11 +21,17 @@ object TrianglePath extends IOApp {
   private val command =
     Command("triangle-path", "")((pathOpt, strategyOpt, functionOpt).tupled)
 
-  override def  run(args: List[String]): IO[ExitCode] =
+  // Function to read and process the triangle from the file
+  private def  processFile(path: Path): IO[String] =
+    DataLoader.loadFile(path) { triangle =>
+      val (path, sum) = Strategy.DFS.minimalPath(triangle)
+      IO.pure(s"Minimal path is: ${path.mkString(" + ")} = $sum")
+    }
+
+  override def run(args: List[String]): IO[ExitCode] =
     command.parse(args) match {
       case Left(help) => IO.pure(Console.err.println(help)).as(ExitCode.Error)
       case Right((path, strategy, function)) =>
-        IO.println(s"Calculating $function using $strategy on data from ${path.toString}").as(ExitCode.Success)
+        processFile(path).flatMap(IO.println).as(ExitCode.Success)
     }
-
 }

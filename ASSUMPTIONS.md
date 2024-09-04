@@ -12,3 +12,6 @@ The program should be able to:
 
 The program should be testable for any provided set of parameters.
 
+Initially DFS search will be implemented as it will be conceptually simplest for manual runs until tests are written.
+Also to showcase abstracting away traversal mechanisms from evaluation criteria. Should be replaced by more optimized graph algorithm.
+

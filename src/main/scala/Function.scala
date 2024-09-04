@@ -2,6 +2,7 @@ package triangle.paths
 
 sealed trait Function {
   val comparator: (Int, Int) => Boolean
+  def apply(x: Int, y: Int): Boolean = comparator(x, y)
 }
 
 object Function {

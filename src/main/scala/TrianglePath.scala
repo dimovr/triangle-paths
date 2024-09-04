@@ -22,9 +22,9 @@ object TrianglePath extends IOApp {
     Command("triangle-path", "")((pathOpt, strategyOpt, functionOpt).tupled)
 
   // Function to read and process the triangle from the file
-  private def  processFile(path: Path): IO[String] =
+  private def  processFile(path: Path, function: Function): IO[String] =
     DataLoader.loadFile(path) { triangle =>
-      val (path, sum) = Strategy.DFS.minimalPath(triangle)
+      val (path, sum) = Strategy.DFS.traverse(triangle, function)
       IO.pure(s"Minimal path is: ${path.mkString(" + ")} = $sum")
     }
 
@@ -32,6 +32,6 @@ object TrianglePath extends IOApp {
     command.parse(args) match {
       case Left(help) => IO.pure(Console.err.println(help)).as(ExitCode.Error)
       case Right((path, strategy, function)) =>
-        processFile(path).flatMap(IO.println).as(ExitCode.Success)
+        processFile(path, function).flatMap(IO.println).as(ExitCode.Success)
     }
 }

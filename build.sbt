@@ -14,6 +14,9 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-effect-testing-specs2" % "1.5.0" % Test,
       "org.typelevel" %% "munit-cats-effect" % "2.0.0" % Test,
       "co.fs2" %% "fs2-core" % "3.10.2",
-      "co.fs2" %% "fs2-io" % "3.10.2"
+      "co.fs2" %% "fs2-io" % "3.10.2",
+      "org.scalatest" %% "scalatest" % "3.2.9" % Test,
+      "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % Test,
+      "org.scalacheck" %% "scalacheck" % "1.15.4" % Test
     )
   )

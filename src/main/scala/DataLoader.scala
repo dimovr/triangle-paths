@@ -6,8 +6,8 @@ import fs2.{Stream, text}
 import fs2.io.file.{Files, Path}
 
 object DataLoader {
-  
-  def dataStream(filePath: Path) =
+
+  def dataStream(filePath: Path): Stream[IO, Vector[Int]] =
     Files[IO].readAll(filePath)
       .through(text.utf8.decode)
       .through(text.lines)
@@ -15,15 +15,7 @@ object DataLoader {
       .map(_.split(" ").map(_.toInt).toVector)
 
   // Function to load the file and process it
-  def withDataResource(filePath: Path)(process: Triangle => Vector[Int]): IO[Vector[Int]] = {
-    val fileResource = Resource.make(IO(dataStream(filePath)))(_ => IO.unit)
-
-    fileResource.use { stream =>
-      stream
-        .compile
-        .to(Vector)
-        .map(process)
-    }
-  }
+  def dataResource(filePath: Path)(process: Triangle => Vector[Int]) =
+    Resource.make(IO(dataStream(filePath)))(_ => IO.unit)
 
 }
